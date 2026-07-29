@@ -2,7 +2,7 @@
 
 A dark fantasy deck-building roguelike.
 
-![The Crimson Citadel](assets/title-CexHAwca.webp)
+![The Crimson Citadel](preview.webp)
 
 ## Play
 
