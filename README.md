@@ -2,7 +2,7 @@
 
 A dark fantasy deck-building roguelike.
 
-![The Crimson Citadel](preview.webp)
+![The Crimson Citadel](screenshots/preview.webp)
 
 ## Play
 
