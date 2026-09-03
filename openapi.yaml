@@ -18,6 +18,7 @@ info:
     | `PUT` | `/games/{gameId}/progress` | `200` | 진행 필드와 전체 덱 저장 |
     | `DELETE` | `/games/{gameId}` | `204` | 실행과 덱 삭제 |
     | `GET` | `/games/search` | `200` | 조건 검색과 페이징 |
+    | `GET` | `/games/stats` | `200` | 전체 기록 집계 |
 
     ## 공통 규칙
 
@@ -41,10 +42,12 @@ info:
     | `phase` | `BATTLE`, `REWARD`, `FINISHED` 중 하나 |
     | `status` | `PLAYING`, `CLEARED`, `FAILED` 중 하나 |
 
-    ## 저장 시각
+    ## 선택 필드
 
-    `createdAt`, `updatedAt`은 서버가 기록하는 생성·마지막 수정 시각이며 목록과 상세
-    응답에 선택적으로 포함된다. 클라이언트는 이 필드가 있으면 저장 시각을 표시한다.
+    `createdAt`, `updatedAt`(저장 시각)과 `deckSize`(카드 수)는 목록·상세 응답의
+    선택 필드다. `GET /games/search`와 `GET /games/stats`는 선택 API로, 서버가
+    `404`를 반환하면 클라이언트는 해당 기능(목록 페이징, 기록판)을 숨긴다.
+    선택 필드가 있으면 클라이언트는 저장 시각과 카드 수를 표시한다.
 servers:
   - url: http://127.0.0.1:8080
 tags:
@@ -217,6 +220,17 @@ paths:
           $ref: '#/components/responses/BadRequest'
         '404':
           $ref: '#/components/responses/NotFound'
+        '409':
+          description: 이미 끝난(`CLEARED`/`FAILED`) 실행에는 진행을 저장할 수 없다
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                status: 409
+                error: Conflict
+                message: 이미 끝난 여정은 진행을 저장할 수 없습니다. id=12
+                path: /games/12/progress
 
   /games/search:
     get:
@@ -240,6 +254,12 @@ paths:
             type: integer
             minimum: 1
             maximum: 10
+        - name: keyword
+          in: query
+          required: false
+          description: 플레이어 이름 부분 일치(대소문자 무시)
+          schema:
+            type: string
         - name: page
           in: query
           required: false
@@ -281,6 +301,30 @@ paths:
                 hasNext: true
         '400':
           $ref: '#/components/responses/BadRequest'
+
+  /games/stats:
+    get:
+      tags: [Search]
+      summary: 전체 기록 집계
+      description: |
+        저장된 모든 실행의 집계를 반환한다. 실행이 없으면 모든 값이 0이다.
+        `clearRate`는 끝난 실행(`CLEARED`+`FAILED`) 중 `CLEARED`의 비율을 반올림한
+        백분율이다.
+      operationId: getStats
+      responses:
+        '200':
+          description: 기록 집계
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GameStatsResponse'
+              example:
+                totalGames: 5
+                playingGames: 3
+                clearedGames: 1
+                failedGames: 1
+                highestFloor: 10
+                clearRate: 50
 
 components:
   parameters:
@@ -464,6 +508,10 @@ components:
           $ref: '#/components/schemas/GamePhase'
         status:
           $ref: '#/components/schemas/GameStatus'
+        deckSize:
+          type: integer
+          description: 저장된 덱의 카드 수. 선택 필드이며 있으면 목록에 표시된다.
+          example: 12
         createdAt:
           type: string
           format: date-time
@@ -515,6 +563,35 @@ components:
         hasNext:
           type: boolean
           example: true
+
+    GameStatsResponse:
+      type: object
+      required: [totalGames, playingGames, clearedGames, failedGames, highestFloor, clearRate]
+      properties:
+        totalGames:
+          type: integer
+          format: int64
+          example: 5
+        playingGames:
+          type: integer
+          format: int64
+          example: 3
+        clearedGames:
+          type: integer
+          format: int64
+          example: 1
+        failedGames:
+          type: integer
+          format: int64
+          example: 1
+        highestFloor:
+          type: integer
+          description: 모든 실행 중 가장 높은 현재 층. 실행이 없으면 0.
+          example: 10
+        clearRate:
+          type: integer
+          description: 끝난 실행 중 클리어 비율(백분율, 반올림)
+          example: 50
 
     ErrorResponse:
       type: object
