@@ -4,10 +4,107 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Crimson Citadel API</title>
-  <style>body { margin: 0; }</style>
+  <style>
+    :root {
+      --cream: #fff8f1;
+      --peach: #ffe9dc;
+      --rose: #d86b7a;
+      --rose-deep: #b8505f;
+      --plum: #4a3b45;
+      --plum-soft: #7a6a72;
+      --panel: #4b3a42;
+      --panel-deep: #3f3038;
+      --mint: #7fbf9e;
+      --sky: #7ba7d1;
+      --butter: #e9b76a;
+      --lilac: #a48ccc;
+    }
+    html, body { margin: 0; background: var(--cream); }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Pretendard", "Segoe UI", "Noto Sans KR", sans-serif;
+      -webkit-font-smoothing: antialiased;
+    }
+    /* 사이드 메뉴 */
+    .menu-content { background: var(--peach) !important; border-right: 1px solid #f3d9cb; }
+    .menu-content label { color: var(--plum) !important; font-weight: 500; }
+    .menu-content li > label.active { background: #ffd9c8 !important; color: var(--rose-deep) !important; border-radius: 10px; }
+    .menu-content li > label:hover { background: #ffe0d0 !important; border-radius: 10px; }
+    .menu-content [role="search"] input { background: #fff !important; border: 1px solid #f3d9cb !important; border-radius: 10px; }
+    /* 본문 */
+    .api-content h1, .api-content h2, .api-content h3 { color: var(--plum) !important; letter-spacing: -0.01em; }
+    .api-content p, .api-content li, .api-content td { line-height: 1.75 !important; }
+    .api-content table th { background: #fff0e6 !important; color: var(--plum) !important; }
+    .api-content table td, .api-content table th { border-color: #f3d9cb !important; }
+    .api-content code {
+      background: #fff0e6 !important; color: var(--rose-deep) !important;
+      border: 1px solid #f7dccf !important; border-radius: 6px !important; padding: 1px 6px !important;
+    }
+    /* 우측 패널 */
+    .redoc-wrap [class*="right-panel"], .redoc-wrap [class*="RightPanel"] { background: var(--panel) !important; }
+    /* HTTP 메서드 배지 */
+    .http-verb { border-radius: 8px !important; font-weight: 700 !important; letter-spacing: 0.02em; }
+    .http-verb.get { background: var(--mint) !important; }
+    .http-verb.post { background: var(--sky) !important; }
+    .http-verb.put { background: var(--butter) !important; }
+    .http-verb.patch { background: var(--lilac) !important; }
+    .http-verb.delete { background: var(--rose) !important; }
+    /* 응답 코드 버튼 */
+    button[class*="ResponseTitle"], .api-content button { border-radius: 10px !important; }
+    /* 요청·응답 예시 탭 */
+    .react-tabs__tab-list { border-bottom-color: #6a5561 !important; }
+    .react-tabs__tab { background: #5c4a54 !important; color: #f6e7ea !important; border: none !important; border-radius: 8px 8px 0 0 !important; }
+    .react-tabs__tab--selected { background: var(--rose) !important; color: #fff !important; }
+  </style>
 </head>
 <body>
-  <redoc spec-url="./openapi.yaml" hide-download-button></redoc>
+  <redoc
+    spec-url="./openapi.yaml"
+    hide-download-button
+    expand-responses="200,201"
+    required-props-first
+    path-in-middle-panel
+    json-sample-expand-level="3"
+    theme='{
+      "colors": {
+        "primary": { "main": "#d86b7a" },
+        "success": { "main": "#5fa885" },
+        "warning": { "main": "#d9a24a" },
+        "error": { "main": "#c95b6b" },
+        "text": { "primary": "#4a3b45", "secondary": "#7a6a72" },
+        "border": { "dark": "#f3d9cb", "light": "#fbe9de" },
+        "http": {
+          "get": "#7fbf9e", "post": "#7ba7d1", "put": "#e9b76a",
+          "patch": "#a48ccc", "delete": "#d86b7a"
+        }
+      },
+      "typography": {
+        "fontSize": "15px",
+        "lineHeight": "1.7",
+        "fontFamily": "-apple-system, BlinkMacSystemFont, \"Apple SD Gothic Neo\", Pretendard, \"Segoe UI\", \"Noto Sans KR\", sans-serif",
+        "headings": { "fontFamily": "inherit", "fontWeight": "700", "lineHeight": "1.4" },
+        "code": { "fontSize": "13px", "fontFamily": "\"SF Mono\", Menlo, Consolas, monospace", "color": "#b8505f", "backgroundColor": "#fff0e6" }
+      },
+      "sidebar": {
+        "backgroundColor": "#ffe9dc",
+        "textColor": "#4a3b45",
+        "activeTextColor": "#b8505f",
+        "width": "280px"
+      },
+      "rightPanel": {
+        "backgroundColor": "#4b3a42",
+        "textColor": "#fbeee9",
+        "width": "42%"
+      },
+      "codeBlock": { "backgroundColor": "#3f3038" },
+      "schema": {
+        "nestedBackground": "#fff3ea",
+        "typeNameColor": "#7ba7d1",
+        "requireLabelColor": "#d86b7a",
+        "linesColor": "#f3d9cb"
+      },
+      "spacing": { "sectionVertical": 48, "sectionHorizontal": 40 }
+    }'
+  ></redoc>
   <script src="./redoc.standalone.js"></script>
 </body>
 </html>
