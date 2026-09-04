@@ -34,7 +34,7 @@ info:
     | 필드 | 제약 |
     | --- | --- |
     | `playerName` | 공백이 아닌 2~12자 |
-    | `deck` | 한 장 이상, 각 원소는 `null`이 아님 |
+    | `deck` | 한 장 이상 |
     | `cardType` | 공백이 아닌 문자열 |
     | `acquiredFloor` | 정수 0~10 |
     | `currentHp` | 정수 0~99 |
