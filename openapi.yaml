@@ -35,6 +35,8 @@ info:
     | --- | --- |
     | `playerName` | 공백이 아닌 2~12자 |
     | `deck` | 한 장 이상 |
+    | `cardType` | 공백이 아닌 문자열 |
+    | `acquiredFloor` | 정수 0~10 |
     | `currentHp` | 정수 0~99 |
     | `currentFloor` | 정수 1~10 |
     | `phase` | `BATTLE`, `REWARD`, `FINISHED` 중 하나 |
@@ -408,11 +410,14 @@ components:
       properties:
         cardType:
           type: string
-          description: 카드 타입. 서버는 해석하지 않는다.
+          description: 카드 타입. 서버는 해석하지 않는다. 공백만으로 된 값은 허용하지 않는다.
+          minLength: 1
           example: STRIKE
         acquiredFloor:
           type: integer
           description: 카드를 얻은 층. 시작 덱은 0.
+          minimum: 0
+          maximum: 10
           example: 0
 
     CardResponse:
