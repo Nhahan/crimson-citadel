@@ -88,7 +88,7 @@ paths:
           description: 생성된 실행의 상세
           headers:
             Location:
-              description: 생성된 실행의 경로 (`/games/{id}`)
+              description: 생성된 실행의 경로 (`/games/{id}`). 선택 헤더로, 없어도 클라이언트는 동작한다.
               schema:
                 type: string
                 example: /games/12
@@ -346,9 +346,9 @@ components:
           schema:
             $ref: '#/components/schemas/ErrorResponse'
           example:
-            timestamp: '2026-09-03T10:02:45.123+00:00'
             status: 400
             error: Bad Request
+            message: 'playerName 값이 올바르지 않습니다: 크기가 2에서 12 사이여야 합니다'
             path: /games
     NotFound:
       description: 해당 ID의 실행이 없음
@@ -357,9 +357,9 @@ components:
           schema:
             $ref: '#/components/schemas/ErrorResponse'
           example:
-            timestamp: '2026-09-03T10:02:45.123+00:00'
             status: 404
             error: Not Found
+            message: 게임을 찾을 수 없습니다. id=999
             path: /games/999
 
   examples:
@@ -410,7 +410,7 @@ components:
       properties:
         cardType:
           type: string
-          description: 카드 타입. 서버는 해석하지 않는다.
+          description: 카드 타입. 서버는 해석하지 않는다. 공백만으로 된 값은 허용하지 않는다.
           minLength: 1
           example: STRIKE
         acquiredFloor:
@@ -441,6 +441,7 @@ components:
       properties:
         playerName:
           type: string
+          description: 공백만으로 된 값은 허용하지 않는다.
           minLength: 2
           maxLength: 12
           example: 밤의 후계자
@@ -457,6 +458,7 @@ components:
       properties:
         playerName:
           type: string
+          description: 공백만으로 된 값은 허용하지 않는다.
           minLength: 2
           maxLength: 12
           example: 붉은 순례자
@@ -596,13 +598,10 @@ components:
     ErrorResponse:
       type: object
       description: |
-        Spring 기본 오류 응답 형식이다. `message`는 선택 필드이며, 있으면 게임
+        오류 응답 형식이다. `message`는 사람이 읽을 수 있는 원인 설명이며, 있으면 게임
         클라이언트가 그대로 화면에 표시한다.
+      required: [status, error, path]
       properties:
-        timestamp:
-          type: string
-          format: date-time
-          example: '2026-09-03T10:02:45.123+00:00'
         status:
           type: integer
           example: 404
